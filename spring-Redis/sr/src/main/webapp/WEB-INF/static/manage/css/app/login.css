@@ -1,0 +1,37 @@
+@CHARSET "UTF-8";
+*{
+	padding: 0;
+	margin: 0;
+	line-height: 24px;
+}
+body {
+	
+	font-family: Microsoft YaHei,'微软雅黑' , Tahoma, Helvetica, Arial, "\5b8b\4f53", sans-serif;
+	color: #222;
+	font-size: 14px;
+	position: fixed;
+	bottom: 0;top: 0;left: 0;right: 0;
+	background-color: #BAE4FF;
+	
+}
+#main{
+	width:40%;
+	margin: 10% auto;
+	background-color: #ffffff;
+}
+#main img,#main form{
+	display: inline-block;
+}
+#main img{
+	float: left;
+	margin-right: 14px;
+}
+input[type=text],input[type='password']{
+	display: block;
+	margin: 10px;
+	padding-left: 5px;
+}
+button{
+	margin: 0 30%;
+	width: 40%
+}

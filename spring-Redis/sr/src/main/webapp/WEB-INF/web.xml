@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+		xmlns="http://java.sun.com/xml/ns/javaee" 
+		xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" 
+		id="WebApp_ID" version="3.0">
+  <display-name>Smartlink</display-name>
+  
+  <!-- 配置spring监听器 -->
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+	
+	 <!-- 配置初始化监听 -->
+    <listener>
+        <listener-class>com.cdsmartlink.utils.listener.WebServerStartListener</listener-class>
+    </listener>
+	
+	
+	<!-- 加载配置文件路径 -->
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>classpath*:applicationContext*.xml</param-value>
+	</context-param>
+	
+	<!-- springmvc配置 -->
+	<servlet>
+		<servlet-name>smartlink</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>smartlink</servlet-name>
+		<url-pattern>/</url-pattern>
+	</servlet-mapping>
+	
+	  <servlet>
+        <servlet-name>wxEntranceServlet</servlet-name>
+        <servlet-class>com.cdsmartlink.wechat.servlet.delegate.DelegatingServletProxy</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>UploadImageServlet</servlet-name>
+        <servlet-class>com.cdsmartlink.wechat.servlet.image.UploadImageServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>FileManagerServlet</servlet-name>
+        <servlet-class>com.cdsmartlink.wechat.servlet.image.FileManagerServlet</servlet-class>
+    </servlet>
+    
+    <servlet-mapping>
+        <servlet-name>wxEntranceServlet</servlet-name>
+        <url-pattern>/wxEntranceServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UploadImageServlet</servlet-name>
+        <url-pattern>/UploadImageServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>FileManagerServlet</servlet-name>
+        <url-pattern>/FileManagerServlet</url-pattern>
+    </servlet-mapping>
+	
+	<!-- 配置OpenSessionInView -->
+	<filter>
+        <filter-name>hibernateFilter</filter-name>
+        <filter-class>org.springframework.orm.hibernate4.support.OpenSessionInViewFilter</filter-class>
+        <!-- singleSession默认为true,若设为false则等于没用OpenSessionInView -->
+        <init-param>
+            <param-name>singleSession</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </filter>
+	
+	<filter-mapping>
+		<filter-name>hibernateFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	 </filter-mapping>
+	 
+	   <filter>
+		  <filter-name>CorsFilter</filter-name>
+		  <filter-class>com.cdsmartlink.utils.cors.filter.CorsFilter</filter-class>
+		</filter>
+		<filter-mapping>
+		  <filter-name>CorsFilter</filter-name>
+		  <url-pattern>/*</url-pattern>
+		</filter-mapping>
+	
+	<!-- 字符编码过滤器 -->
+    <filter>
+        <filter-name>CharacterEncodingFilter</filter-name>
+        <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+        <init-param>
+            <param-name>encoding</param-name>
+            <param-value>UTF-8</param-value>
+        </init-param>
+        <init-param>
+            <param-name>forceEncoding</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>CharacterEncodingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    
+    <!-- 配置oauth认证过滤器 -->
+    <filter>
+    	<filter-name>webSiteLoginFilterBean</filter-name>
+    	<filter-class>com.cdsmartlink.utils.delegate.filter.DelegatingWebSiteFilterProxy</filter-class>
+    	<init-param>
+    		<param-name>webSiteFilterBean</param-name>
+    		<param-value>webOauthFilter</param-value>
+    	</init-param>
+    </filter>
+    <filter-mapping>
+    	<filter-name>webSiteLoginFilterBean</filter-name>
+    	<url-pattern>/oauth/*</url-pattern>
+    </filter-mapping>
+    
+	<!-- 配置验证客户端登录的过滤器 -->
+     <filter>  
+        <filter-name>proxyFilterBean</filter-name>  
+        <filter-class>com.cdsmartlink.utils.delegate.filter.DelegatingFilterProxy</filter-class>  
+        <init-param>  
+            <param-name>targetFilterBean</param-name>  
+            <param-value>mobileLoginFilter</param-value>  
+        </init-param>  
+    </filter>  
+    
+    <filter-mapping>  
+        <filter-name>proxyFilterBean</filter-name>  
+        <url-pattern>/mobile/*</url-pattern>  
+    </filter-mapping>  
+    
+    <!-- 配置登录与不登录同一页面部分不同的过滤器 -->
+     <filter>  
+        <filter-name>configProxyFilterBean</filter-name>  
+        <filter-class>com.cdsmartlink.utils.delegate.filter.DelegatingConfigFilterProxy</filter-class>  
+        <init-param>  
+            <param-name>targetConfigFilterBean</param-name>  
+            <param-value>mobileConfigFilter</param-value>  
+        </init-param>  
+    </filter>
+     <filter-mapping>  
+        <filter-name>configProxyFilterBean</filter-name>  
+        <url-pattern>/common/*</url-pattern>  
+    </filter-mapping>  
+    
+	
+	<!-- 配置后台登录的过滤器 -->
+	 <filter>  
+        <filter-name>backStageLoginFilterBean</filter-name>  
+        <filter-class>com.cdsmartlink.utils.delegate.filter.DelegatingBackstageFilterProxy</filter-class>  
+        <init-param>  
+            <param-name>backstageFilterBean</param-name>  
+            <param-value>backStageLoginFilter</param-value>  
+        </init-param>  
+    </filter>
+     <filter-mapping>  
+        <filter-name>backStageLoginFilterBean</filter-name>  
+        <url-pattern>/system/*</url-pattern>  
+    </filter-mapping>  
+	
+	<!-- 配置运营商 -->
+	 <filter>  
+        <filter-name>operatorLoginFilterBean</filter-name>  
+        <filter-class>com.cdsmartlink.utils.delegate.filter.DelegatingOperatorFilterProxy</filter-class>  
+        <init-param>  
+            <param-name>operatorFilterBean</param-name>  
+            <param-value>operatorLoginFilter</param-value>  
+        </init-param>  
+    </filter>
+     <filter-mapping>  
+        <filter-name>operatorLoginFilterBean</filter-name>  
+        <url-pattern>/operator/*</url-pattern>  
+    </filter-mapping> 
+	
+	
+	<!-- <filter>
+		<filter-name>operatorLoginFilter</filter-name>
+		<filter-class>com.cdsmartlink.system.operation.filter.OperatorLoginFilter</filter-class>
+	</filter>
+	
+	<filter-mapping>
+		<filter-name>operatorLoginFilter</filter-name>
+		<url-pattern>/operator/*</url-pattern>
+	</filter-mapping> -->
+	
+	<!-- 配置获取来访者ip的过滤器 -->
+     <filter>  
+        <filter-name>visitBean</filter-name>  
+        <filter-class>com.cdsmartlink.utils.delegate.filter.DelegatingVisitFilterProxy</filter-class>  
+        <init-param>  
+            <param-name>visitFilterBean</param-name>  
+            <param-value>visitFilter</param-value>  
+        </init-param>  
+    </filter>
+     <filter-mapping>  
+        <filter-name>visitBean</filter-name>  
+        <url-pattern>/*</url-pattern>  
+    </filter-mapping>  
+	
+  <welcome-file-list>
+    <welcome-file>index.html</welcome-file>
+    <welcome-file>index.htm</welcome-file>
+    <welcome-file>index.jsp</welcome-file>
+    <welcome-file>default.html</welcome-file>
+    <welcome-file>default.htm</welcome-file>
+    <welcome-file>default.jsp</welcome-file>
+  </welcome-file-list>
+  
+   <error-page>
+        <error-code>404</error-code>
+        <location>/static/html/page_404/404.html</location>
+    </error-page>
+</web-app>

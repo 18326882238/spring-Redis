@@ -1,0 +1,29 @@
+@CHARSET "UTF-8";
+#myForm{
+	width: 70%;
+	margin: 50px auto;
+}
+#myForm table tr td{
+	line-height:40px;
+	border-left: 0;
+}
+#myForm table tr td:first-child{
+	width:20%;
+	padding-right:20px;
+	border-left:thin solid #ccc;
+	text-align: right;
+	letter-spacing: 2px;
+}
+#myForm button{
+	width: 100px;
+	letter-spacing: 10px;
+}
+#myForm button[type=submit] {
+	margin-right: 30px;
+	margin-left: -10px;
+}
+#myForm small {
+	color: red;
+	padding-left: 20px;
+	font-size: 14px;
+}
